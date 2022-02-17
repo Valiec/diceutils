@@ -15,12 +15,6 @@ overflow = False
 
 if __name__ == '__main__':
 
-    tbhlist = ["Tbh", "Tbh is overused, tbh.", "*Tbh*", ":regional_indicator_t: :regional_indicator_b: :regional_indicator_h:", "**Tbh**", "Tbh, like I don’t like the phrase tbh as like tbh I hate it."]
-
-    if os.path.isfile("markov.dump"):
-        with open("markov.dump", "rb") as f:
-            markov_data = pickle.load(f)
-
     prefix='-'
 
     bot = commands.Bot(command_prefix=prefix, description="Rolls dice for you.")
