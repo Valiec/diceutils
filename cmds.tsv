@@ -1,0 +1,3 @@
+help [PAGE]	Display page PAGE of the help for this bot (or page 1 if no page specified).
+flamingo	Displays a flamingo GIF.
+calc	computes a mathematical expression which may or may not include dice rolls.
