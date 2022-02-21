@@ -47,6 +47,6 @@ To run an instance of this bot, you need the latest version of **discord.py**, a
 
 3. Create a Discord bot account (through the My Applications page on Discord), and obtain the token for this new bot account.
 
-4. Create a file in the same folder as diceutils.py called "token.txt", and place the bot token in it.
+4. Go into the "token.txt" file, and replace "EXAMPLE_TOKEN_CHANGE_ME" with the actual bot token.
 
 5. Run the bot using `python diceutils.py`.
