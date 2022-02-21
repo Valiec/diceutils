@@ -33,3 +33,20 @@ The supported operations are as follows:
 
 * Average (`avg`): This returns the mean of the rolls.
 
+## Running the Bot
+
+### Dependencies
+
+To run an instance of this bot, you need the latest version of **discord.py**, and **Python 3** (I have successfully run it using Python 3.6.9 and 3.9.9).
+
+### Setting up the bot
+
+1. Install dependencies (see above).
+
+2. Clone this repo into a folder somewhere.
+
+3. Create a Discord bot account (through the My Applications page on Discord), and obtain the token for this new bot account.
+
+4. Create a file in the same folder as diceutils.py called "token.txt", and place the bot token in it.
+
+5. Run the bot using `python diceutils.py`.
