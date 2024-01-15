@@ -37,7 +37,7 @@ The supported operations are as follows:
 
 ### Dependencies
 
-To run an instance of this bot, you need the latest version of **discord.py**, and **Python 3** (I have successfully run it using Python 3.6.9 and 3.9.9).
+To run an instance of this bot, you need the latest version of **discord.py**, and **Python 3** (I have successfully run it using Python 3.8.10).
 
 ### Setting up the bot
 
