@@ -216,8 +216,8 @@ def process_dice(token):
     print(func)
     print(token)
 
-    valid = valid_dice_roll(token_str)
-    too_many = too_many_dice(token_str)
+    valid = valid_dice_roll(token)
+    too_many = too_many_dice(token)
 
     if valid and not too_many:
         rollvals = roll_all_dice(int(token[0]), int(token[1]))
