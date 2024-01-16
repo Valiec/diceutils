@@ -98,6 +98,7 @@ def collapse_repeated_ops(tokens):
     i = len(tokens)-1
     while i >= 0:
         cur = tokens[i]
+        skip_prepend = False
         print("testing, cur: " + str(cur)+", final: " + str(final)+" cur is op: "+str(is_operator(cur))
               +" final[-1] is op: "+str(is_operator(final[0] if len(final) > 0 else "None")))
         if is_operator(cur) and len(final) > 0 and is_operator(final[0]):
@@ -106,7 +107,9 @@ def collapse_repeated_ops(tokens):
             if new_op is not None:
                 final[0] = new_op
                 print("combined, final is now: " + str(final))
-        else:
+                skip_prepend = True
+
+        if not skip_prepend:
             final = [cur] + final  # prepend cur to final
         i -= 1
     return final
@@ -169,7 +172,7 @@ def eval_exp(tokens):
                 last_op = "^"
             elif last_op != "":
                 # tokens_pass2.append(str(float(last_token)**float(token)))
-                if last_token == "":
+                if last_token == "" or token == "":
                     raise DiceError("Invalid expression syntax")
                 last_token = str(float_or_error(token) ** float_or_error(last_token))
                 last_op = ""
@@ -194,19 +197,21 @@ def eval_mul_div(tokens):
         last_op = ""
         tokens_pass3 = []
         for token in tokens_pass2:
-            if token == "*":
+            if token == "*" or token == "/" and last_op != "":
+                raise DiceError("Invalid expression syntax")
+            elif token == "*":
                 last_op = "*"
             elif token == "/":
                 last_op = "/"
             elif last_op == "*":
                 # tokens_pass3.append(str(float(last_token)*float(token)))
-                if last_token == "":
+                if last_token == "" or token == "":
                     raise DiceError("Invalid expression syntax")
                 last_token = str(float_or_error(last_token) * float_or_error(token))
                 last_op = ""
             elif last_op == "/":
                 # tokens_pass3.append(str(float(last_token)/float(token)))
-                if last_token == "":
+                if last_token == "" or token == "":
                     raise DiceError("Invalid expression syntax")
                 last_token = str(float_or_error(last_token) / float_or_error(token))
                 last_op = ""
@@ -217,6 +222,8 @@ def eval_mul_div(tokens):
         if last_token != "":
             tokens_pass3.append(last_token)
         tokens_pass2 = tokens_pass3[:]
+    if last_op != "":
+        raise DiceError("Invalid expression syntax")
     return tokens_pass3
 
 
@@ -239,12 +246,18 @@ def eval_add_sub(tokens):
                 # tokens_pass4.append(str(float(last_token)+float(token)))
                 if last_token == "":
                     last_token = "0"
+                if token == "":
+                    raise DiceError("Invalid expression syntax")
+                print("A")
                 last_token = str(float_or_error(last_token) + float_or_error(token))
                 last_op = ""
             elif last_op == "-":
                 if last_token == "":
                     last_token = "0"
+                if token == "":
+                    raise DiceError("Invalid expression syntax")
                 # tokens_pass4.append(str(float(last_token)-float(token)))
+                print("S")
                 last_token = str(float_or_error(last_token) - float_or_error(token))
                 last_op = ""
             else:
@@ -254,6 +267,8 @@ def eval_add_sub(tokens):
         if last_token != "":
             tokens_pass4.append(last_token)
         tokens_pass3 = tokens_pass4[:]
+        if last_op != "":
+            raise DiceError("Invalid expression syntax")
     return tokens_pass4
 
 
@@ -327,7 +342,7 @@ def evaluate(tokens_pass0):
 
     print("Pass 4: " + str(tokens_pass4))
 
-    if len(tokens_pass4) == 0:
+    if len(tokens_pass4) != 1:
         raise DiceError("Invalid expression")
 
     return tokens_pass4[0]
