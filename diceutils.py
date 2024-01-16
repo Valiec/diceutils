@@ -127,6 +127,8 @@ def eval_exp(tokens):
                 last_op = "^"
             elif last_op != "":
                 # tokens_pass2.append(str(float(last_token)**float(token)))
+                if last_token == "":
+                    raise DiceError("Invalid expression syntax")
                 last_token = str(float(token) ** float(last_token))
                 last_op = ""
             else:
@@ -156,10 +158,14 @@ def eval_mul_div(tokens):
                 last_op = "/"
             elif last_op == "*":
                 # tokens_pass3.append(str(float(last_token)*float(token)))
+                if last_token == "":
+                    raise DiceError("Invalid expression syntax")
                 last_token = str(float(last_token) * float(token))
                 last_op = ""
             elif last_op == "/":
                 # tokens_pass3.append(str(float(last_token)/float(token)))
+                if last_token == "":
+                    raise DiceError("Invalid expression syntax")
                 last_token = str(float(last_token) / float(token))
                 last_op = ""
             else:
@@ -179,7 +185,7 @@ def eval_add_sub(tokens):
     while "+" in tokens_pass3 or "-" in tokens_pass3 or first_pass:
         first_pass = False
         print("tokens_pass3 is " + str(tokens_pass3))
-        last_token = ""
+        last_token = "0"
         last_op = ""
         tokens_pass4 = []
         for token in tokens_pass3:
