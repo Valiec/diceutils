@@ -168,7 +168,9 @@ def eval_exp(tokens):
         last_op = ""
         tokens_pass2 = []
         for token in tokens_pass1:
-            if token == "^":
+            if token == "^" and last_op != "":
+                raise DiceError("Invalid expression syntax")
+            elif token == "^":
                 last_op = "^"
             elif last_op != "":
                 # tokens_pass2.append(str(float(last_token)**float(token)))
@@ -183,6 +185,8 @@ def eval_exp(tokens):
         if last_token != "":
             tokens_pass2.append(last_token)
         tokens_pass1 = tokens_pass2[:]
+        if last_op != "":
+            raise DiceError("Invalid expression syntax")
     tokens_pass2.reverse()
     return tokens_pass2
 
@@ -197,7 +201,7 @@ def eval_mul_div(tokens):
         last_op = ""
         tokens_pass3 = []
         for token in tokens_pass2:
-            if token == "*" or token == "/" and last_op != "":
+            if (token == "*" or token == "/") and last_op != "":
                 raise DiceError("Invalid expression syntax")
             elif token == "*":
                 last_op = "*"
@@ -222,8 +226,8 @@ def eval_mul_div(tokens):
         if last_token != "":
             tokens_pass3.append(last_token)
         tokens_pass2 = tokens_pass3[:]
-    if last_op != "":
-        raise DiceError("Invalid expression syntax")
+        if last_op != "":
+            raise DiceError("Invalid expression syntax")
     return tokens_pass3
 
 
@@ -238,7 +242,9 @@ def eval_add_sub(tokens):
         last_op = ""
         tokens_pass4 = []
         for token in tokens_pass3:
-            if token == "+":
+            if (token == "+" or token == "-") and last_op != "":
+                raise DiceError("Invalid expression syntax")
+            elif token == "+":
                 last_op = "+"
             elif token == "-":
                 last_op = "-"
