@@ -242,9 +242,7 @@ def eval_add_sub(tokens):
         last_op = ""
         tokens_pass4 = []
         for token in tokens_pass3:
-            if (token == "+" or token == "-") and last_op != "":
-                raise DiceError("Invalid expression syntax")
-            elif token == "+":
+            if token == "+":
                 last_op = "+"
             elif token == "-":
                 last_op = "-"
