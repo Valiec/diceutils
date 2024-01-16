@@ -1,4 +1,3 @@
-import os
 import random
 import multiprocessing
 
@@ -26,6 +25,13 @@ class DiceUtils(discord.Client):
         # update slash commands
         await tree.sync()
         print('Logged on as', self.user)
+
+
+def float_or_error(num):
+    try:
+        return float(num)
+    except ValueError:
+        raise DiceError("Invalid expression syntax")
 
 
 def roll_dice(q, dsize, ndice):
@@ -74,13 +80,47 @@ def is_operator(char):
     return char in operators
 
 
+def combine_ops(cur, prev):
+    print("combining: "+str(cur)+", "+str(prev)+"?")
+    if cur == "+" and prev == "-" or cur == "-" and prev == "+":
+        return "-"
+    elif cur == "-" and prev == "-":
+        return "+"
+    elif cur == "+" and prev == "+":
+        return "+"
+    else:
+        return None
+
+
+def collapse_repeated_ops(tokens):
+    final = []
+    new = ""
+    i = len(tokens)-1
+    while i >= 0:
+        cur = tokens[i]
+        print("testing, cur: " + str(cur)+", final: " + str(final)+" cur is op: "+str(is_operator(cur))
+              +" final[-1] is op: "+str(is_operator(final[0] if len(final) > 0 else "None")))
+        if is_operator(cur) and len(final) > 0 and is_operator(final[0]):
+            print("trying to combine, final is: "+str(final))
+            new_op = combine_ops(cur, final[0])
+            if new_op is not None:
+                final[0] = new_op
+                print("combined, final is now: " + str(final))
+        else:
+            final = [cur] + final  # prepend cur to final
+        i -= 1
+    return final
+
+
 def tokenize(text):
     tokens = []
     paren_token = ""
     paren_level = 0
     cur_token_str = ""
     for char in text:
-        if char == "(":
+        if char.isspace():
+            continue
+        elif char == "(":
             if paren_level == 0:
                 if cur_token_str != "":
                     tokens.append(cur_token_str[:])
@@ -109,7 +149,9 @@ def tokenize(text):
 
     if cur_token_str != "":
         tokens.append(cur_token_str[:])
-    return tokens
+
+    collapsed = collapse_repeated_ops(tokens)
+    return collapsed
 
 
 def eval_exp(tokens):
@@ -129,7 +171,7 @@ def eval_exp(tokens):
                 # tokens_pass2.append(str(float(last_token)**float(token)))
                 if last_token == "":
                     raise DiceError("Invalid expression syntax")
-                last_token = str(float(token) ** float(last_token))
+                last_token = str(float_or_error(token) ** float_or_error(last_token))
                 last_op = ""
             else:
                 if last_token != "":
@@ -160,13 +202,13 @@ def eval_mul_div(tokens):
                 # tokens_pass3.append(str(float(last_token)*float(token)))
                 if last_token == "":
                     raise DiceError("Invalid expression syntax")
-                last_token = str(float(last_token) * float(token))
+                last_token = str(float_or_error(last_token) * float_or_error(token))
                 last_op = ""
             elif last_op == "/":
                 # tokens_pass3.append(str(float(last_token)/float(token)))
                 if last_token == "":
                     raise DiceError("Invalid expression syntax")
-                last_token = str(float(last_token) / float(token))
+                last_token = str(float_or_error(last_token) / float_or_error(token))
                 last_op = ""
             else:
                 if last_token != "":
@@ -197,13 +239,13 @@ def eval_add_sub(tokens):
                 # tokens_pass4.append(str(float(last_token)+float(token)))
                 if last_token == "":
                     last_token = "0"
-                last_token = str(float(last_token) + float(token))
+                last_token = str(float_or_error(last_token) + float_or_error(token))
                 last_op = ""
             elif last_op == "-":
                 if last_token == "":
                     last_token = "0"
                 # tokens_pass4.append(str(float(last_token)-float(token)))
-                last_token = str(float(last_token) - float(token))
+                last_token = str(float_or_error(last_token) - float_or_error(token))
                 last_op = ""
             else:
                 if last_token != "":
@@ -285,6 +327,9 @@ def evaluate(tokens_pass0):
 
     print("Pass 4: " + str(tokens_pass4))
 
+    if len(tokens_pass4) == 0:
+        raise DiceError("Invalid expression")
+
     return tokens_pass4[0]
 
 
@@ -300,12 +345,14 @@ tree = app_commands.CommandTree(client)
     description="compute a mathematical expression including dice rolls",
 )
 async def calc(interaction, expr: str):
-    tokens_all = tokenize(expr)
+    tokens_all = []
     try:
+        tokens_all = tokenize(expr)
         result = evaluate(tokens_all)
         await interaction.response.send_message("`" + expr + " -> " + str(tokens_all) + " -> " + str(result) + "`")
     except DiceError as err:
-        await interaction.response.send_message("Error: `" + expr + " -> " + str(tokens_all) + "`:\n" + err.message, ephemeral=True)
+        await interaction.response.send_message("Error: `" + expr + " -> " + str(tokens_all) + "`:\n" + err.message,
+                                                ephemeral=True)
 
 
 @tree.command(
@@ -457,7 +504,7 @@ async def say(interaction, text: str):
 
 
 with open("token.txt") as f:
-    token = f.read().strip()
+    discord_api_token = f.read().strip()
 
 if __name__ == '__main__':
-    client.run(token)
+    client.run(discord_api_token)
