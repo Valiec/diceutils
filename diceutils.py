@@ -423,6 +423,113 @@ async def roll(interaction, text: str):
         await interaction.response.send_message("Error: `" + text + "` is not a valid dice roll.", ephemeral=True)
 
 
+def get_max_initiative(totals, additives):
+    max_val = -1 # initiative totals are nonnegative
+    max_inds = [] # indices where the maximum value occurs
+    for i in range(len(totals)):
+        # new maximum, reset occurences
+        if totals[i] > max_val: 
+            max_val = totals[i]
+            max_inds = [i]
+        # repeat of current max, add to list
+        elif totals[i] == max_val:
+            max_inds.append(i)
+
+    # if there is only one maximum, return it
+    if len(max_inds) == 1:
+        return max_inds[0]
+
+    # if there is a tie, try to use the additive to break the tie
+
+    max_add = 0 # additives are positive
+    max_add_inds = [] # indices where max additive occurs
+
+    for i in range(len(max_inds)):
+        # new maximum, reset occurences
+        if additives[max_inds[i]] > max_add:
+            max_add = additives[max_inds[i]]
+            max_add_inds = [max_inds[i]]
+        # repeat of current max, add to list
+        elif additives[max_inds[i]] == max_add:
+            max_add_inds.append(max_inds[i])
+
+    # if there is now only one maximum, return it
+    if len(max_add_inds) == 1:
+        return max_add_inds[0]
+    
+    # else, randomly pick among the remaining ties (tied with both total and additive)
+    return random.choice(max_add_inds)
+
+
+def roll_init_helper(turns, starts, incrs, names, debug):
+        totals = starts[:]
+        turn_order = []
+        turn_totals_pre = []
+        turn_totals_post = []
+        round_starts = [0] # turn numbers (zero-based) just before which a new round starts
+        taken_turns = [False]*len(names)
+        for i in range(turns):
+            current = get_max_initiative(totals, incrs)
+            turn_totals_pre.append("["+(",".join([str(val) for val in totals]))+"]")
+            turn_order.append(current)
+            totals = [totals[j] + incrs[j] for j in range(len(totals))]
+            totals[current] = 0
+            turn_totals_post.append("["+(",".join([str(val) for val in totals]))+"]")
+            taken_turns[current] = True # has taken a turn
+            if False not in taken_turns: # everyone has taken a turn, round over
+                round_starts.append(len(turn_order)) # record round start after this turn
+                taken_turns = [False]*len(names) # reset taken_turns
+
+
+        turn_log = []
+        for i in range(len(turn_order)):
+            new_turn = ""
+            if i in round_starts:
+                new_turn += "=== NEW ROUND ===\n"
+            new_turn += "Turn "+str(i+1)+": "+names[turn_order[i]]
+            if debug:
+                new_turn += " (debug: "+turn_totals_pre[i]+" -> "+turn_totals_post[i]+")"
+            turn_log.append(new_turn)
+
+        return "\n".join(turn_log)
+
+
+async def roll_init_cmd_helper(interaction, turns, starts, increments, names, debug):
+    try:
+        incrs_l = [int(val) for val in increments.split(",")]
+        if "," in starts:
+            starts_l = [int(val) for val in starts.split(",")]
+        elif starts == "-":
+            starts_l = incrs_l[:]
+        else:
+            raise ValueError("oops")
+
+        names_l = names.split(",")
+        turn_order = roll_init_helper(turns, starts_l, incrs_l, names_l, debug)
+        if len(turn_order) < 2000:
+            await interaction.response.send_message(turn_order)
+        else:
+            await interaction.response.send_message("Output would exceed 2000 characters", ephemeral=True)
+    except ValueError:
+        await interaction.response.send_message("Argument syntax error", ephemeral=True)
+        
+
+@tree.command(
+    name="init",
+    description="roll initiative",
+)
+async def roll_init(interaction, turns: int, starting_totals: str, additives: str, names: str):
+    """Rolls dice."""
+    await roll_init_cmd_helper(interaction, turns, starting_totals, additives, names, False)
+
+@tree.command(
+    name="initdb",
+    description="roll initiative (debug)",
+)
+async def roll_init_db(interaction, turns: int, starting_totals: str, additives: str, names: str):
+    """Rolls dice."""
+    await roll_init_cmd_helper(interaction, turns, starting_totals, additives, names, True)
+
 @tree.command(
     name="alive",
     description="check the bot is alive",
@@ -430,7 +537,6 @@ async def roll(interaction, text: str):
 async def alive(interaction):
     await interaction.response.send_message("I'm a bot, how can you kill a bot? What a grand and intoxicating "
                                             + "innocence.")
-
 
 @tree.command(
     name="catgif",
