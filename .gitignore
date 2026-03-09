@@ -2,3 +2,5 @@ diceutils/*
 diceutils/**/*
 diceutils
 token.txt
+venv/*
+venv/**/*
