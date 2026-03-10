@@ -280,8 +280,8 @@ async def discardhand(interaction, deck: str):
     if interaction.user.id not in card_data.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
-        for i in range(len(card_data.games[deck].hands[interaction.user.id].cards)):
-            card_data.games[deck].hands[interaction.user.id].discard(i, card_data.games[deck].decks[deck])
+        for _ in card_data.games[deck].hands[interaction.user.id].cards:
+            card_data.games[deck].hands[interaction.user.id].discard(0, card_data.games[deck].decks[deck])
         del card_data.games[deck].hands[interaction.user.id]
         await interaction.response.send_message(f"Hand discarded.", ephemeral=True)
 
