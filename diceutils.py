@@ -232,7 +232,7 @@ async def draw(interaction, deck: str, count: int = 1):
         if interaction.user.id not in card_data.games[deck].hands:
             card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
         card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
-    await interaction.response.send_message(", ".join(drawn_cards), ephemeral=True)
+    await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
 
 @tree.command(
     name="hand",
