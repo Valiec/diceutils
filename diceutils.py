@@ -210,7 +210,8 @@ async def createdeck(interaction, name: str, jokers: bool = False):
     """Creates a deck."""
     new_deck = Deck.init_cards_default(jokers)
     new_deck.name = name
-    new_game = Game(name, [new_deck], [])
+    new_game = Game(name, {}, {})
+    new_game.add_deck(new_deck)
     card_data.add_game(new_game)
     await interaction.response.send_message("success!")
 

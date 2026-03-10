@@ -27,6 +27,9 @@ class Game:
     def add_deck(self, deck):
         self.decks[deck.name] = deck
 
+    def add_hand(self, hand):
+        self.hands[hand.member] = hand
+
     def serialize(self):
         return {"name": self.name, "decks": [deck.serialize() for deck in self.decks],
                 "hands": [hand.serialize() for hand in self.hands]}
