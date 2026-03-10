@@ -5,7 +5,7 @@ import random
 import discord
 from discord import app_commands
 
-from cards import CardsData, Deck, Game
+from cards import CardsData, Deck, Game, Hand
 from dice import too_many_dice, evaluate, tokenize, DiceError, valid_dice_roll, roll_all_dice, roll_init_cmd_helper
 
 tbhlist = ["Tbh", "Tbh is overused, tbh.", "*Tbh*",
@@ -226,7 +226,21 @@ async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool
 async def draw(interaction, deck: str):
     """Draws a card."""
     card = card_data.games[deck].decks[deck].draw()
+    if interaction.message.author.id not in card_data.games[deck].hands:
+        card_data.games[deck].hands[interaction.message.author.id] = Hand([card], interaction.message.author.id)
+    card_data.games[deck].hands[interaction.message.author.id].add_card(card)
     await interaction.response.send_message(card, ephemeral=True)
+
+@tree.command(
+    name="hand",
+    description="See your hand",
+)
+async def draw(interaction, deck: str):
+    """Shows your hand."""
+    if interaction.message.author.id not in card_data.games[deck].hands:
+        await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
+    else:
+        await interaction.response.send_message(card_data.games[deck].hands[interaction.message.author.id], ephemeral=True)
 
 @tree.command(
     name="shuffle",

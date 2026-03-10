@@ -61,6 +61,9 @@ class Hand:
     def remove_card(self, index):
         return self.cards.remove(self.cards[index])
 
+    def __str__(self):
+        return ", ".join([str(card) for card in self.cards])
+
     def serialize(self):
         return {"member": self.member, "cards": [card.serialize() for card in self.cards]}
 
