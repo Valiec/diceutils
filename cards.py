@@ -130,7 +130,7 @@ class Card:
             self.color = "Red"
         if self.suit == "Spades" or self.suit == "Clubs" or self.suit == "black":
             self.color = "Black"
-        if self.num == -1:
+        if self.num == "Joker":
             self.joker = True
 
     def full_name(self):
