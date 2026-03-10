@@ -61,6 +61,12 @@ class Hand:
     def remove_card(self, index):
         return self.cards.remove(self.cards[index])
 
+    def discard(self, index, deck):
+        card = self.cards[index]
+        del self.cards[index]
+        deck.discard(card)
+        return card
+
     def __str__(self):
         return ", ".join([str(card) for card in self.cards])
 
