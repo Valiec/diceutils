@@ -267,7 +267,7 @@ async def discard(interaction, deck: str, index: int):
     elif index < 1 or index > len(card_data.games[deck].hands[interaction.user.id].cards):
         await interaction.response.send_message("Card index out of range.", ephemeral=True)
     else:
-        card = card_data.games[deck].hands[interaction.user.id].discard(index-1, deck)
+        card = card_data.games[deck].hands[interaction.user.id].discard(index-1, card_data.games[deck].decks[deck])
         await interaction.response.send_message(f"{card} discarded.", ephemeral=True)
 
 
