@@ -252,8 +252,22 @@ async def hand(interaction, deck: str):
 )
 async def shuffle(interaction, deck: str):
     """Draws a card."""
-    card = card_data.games[deck].decks[deck].shuffle()
+    card_data.games[deck].decks[deck].shuffle()
     await interaction.response.send_message(f"Deck {deck} shuffled.")
+
+
+@tree.command(
+    name="discard",
+    description="Discards a card",
+)
+async def discard(interaction, deck: str, index: int):
+    """Discards a card."""
+    if interaction.user.id not in card_data.games[deck].hands:
+        await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
+    else:
+        card = card_data.games[deck].hands[interaction.user.id].cards[index]
+        card_data.games[deck].decks[deck].discard(card)
+        await interaction.response.send_message(f"{card} discarded.", ephemeral=True)
 
 
 with open("token.txt") as f:
