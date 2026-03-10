@@ -133,13 +133,7 @@ class Card:
         if self.num == "Joker":
             self.joker = True
 
-    def full_name(self):
-        if not self.joker:
-            return f"{self.num} of {self.suit}"
-        else:
-            return f"{self.color} Joker"
-
-    def __str__(self):
+    def short_name(self):
         if not self.joker:
             suits = {"Hearts": ":hearts:", "Diamonds":":diamonds:", "Spades":":spades:", "Clubs":":clubs:"}
             short_names = {"Ace":"A", "2":"2", "3":"3", "4":"4", "5":"5", "6":"6", "7":"7", "8":"8",
@@ -147,6 +141,13 @@ class Card:
             return f"{short_names[self.num]}{suits[self.suit]}"
         else:
             return f"Jo{':red_circle:' if self.color == 'Red' else ':black_circle:'}"
+
+
+    def __str__(self):
+        if not self.joker:
+            return f"{self.num} of {self.suit} ({self.short_name()})"
+        else:
+            return f"{self.color} Joker ({self.short_name()})"
 
 
     def serialize(self):
