@@ -5,7 +5,7 @@ class CardsData:
         self.games = games
 
     def add_game(self, game):
-        self.games.append(game)
+        self.games[game.name] = game
 
     def serialize(self):
         return [game.serialize() for game in self.games]
@@ -25,7 +25,7 @@ class Game:
         self.hands = hands
 
     def add_deck(self, deck):
-        self.decks.append(deck)
+        self.decks[deck.name] = deck
 
     def serialize(self):
         return {"name": self.name, "decks": [deck.serialize() for deck in self.decks],
