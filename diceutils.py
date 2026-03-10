@@ -271,6 +271,21 @@ async def discard(interaction, deck: str, index: int):
         await interaction.response.send_message(f"{card} discarded.", ephemeral=True)
 
 
+@tree.command(
+    name="discardhand",
+    description="Discards all cards in your hand",
+)
+async def discardhand(interaction, deck: str):
+    """Discards all cards in your hand."""
+    if interaction.user.id not in card_data.games[deck].hands:
+        await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
+    else:
+        for i in range(len(card_data.games[deck].hands[interaction.user.id].cards)):
+            card_data.games[deck].hands[interaction.user.id].discard(i, card_data.games[deck].decks[deck])
+        del card_data.games[deck].hands[interaction.user.id]
+        await interaction.response.send_message(f"Hand discarded.", ephemeral=True)
+
+
 with open("token.txt") as f:
     discord_api_token = f.read().strip()
 
