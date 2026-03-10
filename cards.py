@@ -89,7 +89,7 @@ class Deck:
                 "discard": [card.serialize() for card in self.drawn]}
 
     @staticmethod
-    def init_cards_default(jokers=True):
+    def init_cards_default(name, jokers=True):
         cards = []
         for suit in ["Hearts", "Diamonds", "Spades", "Clubs"]:
             for num in ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]:
@@ -98,7 +98,7 @@ class Deck:
             cards.append(Card("red", "Joker"))
             cards.append(Card("black", "Joker"))
 
-        return Deck(cards, [], [], [])
+        return Deck(name, cards, [], [])
 
     @staticmethod
     def deserialize(deck_data):
