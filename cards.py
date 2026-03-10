@@ -8,7 +8,7 @@ class CardsData:
         self.games[game.name] = game
 
     def serialize(self):
-        return [game.serialize() for game in self.games]
+        return [game.serialize() for game in self.games.values()]
 
     @staticmethod
     def deserialize(cards_data):
@@ -31,8 +31,8 @@ class Game:
         self.hands[hand.member] = hand
 
     def serialize(self):
-        return {"name": self.name, "decks": [deck.serialize() for deck in self.decks],
-                "hands": [hand.serialize() for hand in self.hands]}
+        return {"name": self.name, "decks": [deck.serialize() for deck in self.decks.values()],
+                "hands": [hand.serialize() for hand in self.hands.values()]}
 
     @staticmethod
     def deserialize(game_data):
