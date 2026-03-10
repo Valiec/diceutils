@@ -18,6 +18,10 @@ class CardsData:
             loaded_games[loaded_game.name] = loaded_game
         return CardsData(loaded_games)
 
+    @staticmethod
+    def setup():
+        return CardsData({})
+
 class Game:
     def __init__(self, name, decks, hands):
         self.name = name

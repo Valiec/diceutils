@@ -1,4 +1,5 @@
 import json
+import os
 import random
 
 import discord
@@ -229,9 +230,13 @@ async def draw(interaction, deck: str):
 with open("token.txt") as f:
     discord_api_token = f.read().strip()
 
-with open("cards.json") as f:
-    cards_dict = json.load(f)
-    card_data = CardsData.deserialize(cards_dict)
+if os.path.exists("cards.json"):
+    with open("cards.json") as f:
+        card_data = CardsData.deserialize(json.load(f))
+    pass  # this is here because my IDE is being strange with the nested blocks
+else:
+    card_data = CardsData.setup()
+
 
 if __name__ == '__main__':
     client.run(discord_api_token)
