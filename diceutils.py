@@ -5,7 +5,7 @@ import random
 import discord
 from discord import app_commands
 
-from cards import CardsData, Deck, Game, Hand
+from cards import CardsData, Deck, Game, Hand, Card
 from dice import too_many_dice, evaluate, tokenize, DiceError, valid_dice_roll, roll_all_dice, roll_init_cmd_helper
 
 tbhlist = ["Tbh", "Tbh is overused, tbh.", "*Tbh*",
@@ -223,13 +223,16 @@ async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool
     name="draw",
     description="Draws a card",
 )
-async def draw(interaction, deck: str):
+async def draw(interaction, deck: str, count: int = 1):
     """Draws a card."""
-    card = card_data.games[deck].decks[deck].draw()
-    if interaction.user.id not in card_data.games[deck].hands:
-        card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
-    card_data.games[deck].hands[interaction.user.id].add_card(card)
-    await interaction.response.send_message(card, ephemeral=True)
+    drawn_cards = []
+    for _ in range(count):
+        drawn_card = card_data.games[deck].decks[deck].draw()
+        drawn_cards.append(drawn_card)
+        if interaction.user.id not in card_data.games[deck].hands:
+            card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
+        card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
+    await interaction.response.send_message(", ".join(drawn_cards), ephemeral=True)
 
 @tree.command(
     name="hand",
