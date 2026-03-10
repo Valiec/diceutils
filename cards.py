@@ -70,7 +70,7 @@ class Hand:
     @staticmethod
     def deserialize(hand_data):
         loaded_cards = []
-        for card in hand_data:
+        for card in hand_data["cards"]:
             loaded_cards.append(Card.deserialize(card))
         return Hand(loaded_cards, hand_data["member"])
 
