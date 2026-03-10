@@ -78,7 +78,9 @@ class Deck:
         random.shuffle(self.cards)
 
     def draw(self):
-        self.drawn.append(self.cards.pop())
+        drawn_card = self.cards.pop()
+        self.drawn.append(drawn_card)
+        return drawn_card
 
     def discard(self, card):
         self.discard.append(card)
