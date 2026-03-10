@@ -216,7 +216,7 @@ async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool
     new_game = Game(name, {}, {})
     new_game.add_deck(new_deck)
     card_data.add_game(new_game)
-    await interaction.response.send_message("success!")
+    await interaction.response.send_message(f"Deck {name} created.")
 
 
 @tree.command(
@@ -226,7 +226,7 @@ async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool
 async def draw(interaction, deck: str):
     """Draws a card."""
     card = card_data.games[deck].decks[deck].draw()
-    await interaction.response.send_message(card)
+    await interaction.response.send_message(card, ephemeral=True)
 
 @tree.command(
     name="shuffle",
@@ -235,7 +235,7 @@ async def draw(interaction, deck: str):
 async def shuffle(interaction, deck: str):
     """Draws a card."""
     card = card_data.games[deck].decks[deck].shuffle()
-    await interaction.response.send_message("shuffled!")
+    await interaction.response.send_message(f"Deck {deck} shuffled.")
 
 
 with open("token.txt") as f:
