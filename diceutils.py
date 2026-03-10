@@ -235,7 +235,7 @@ async def draw(interaction, deck: str):
     name="hand",
     description="See your hand",
 )
-async def draw(interaction, deck: str):
+async def hand(interaction, deck: str):
     """Shows your hand."""
     if interaction.user.id not in card_data.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
