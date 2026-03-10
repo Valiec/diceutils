@@ -207,10 +207,12 @@ async def say(interaction, text: str):
     name="createdeck",
     description="Creates a new deck",
 )
-async def createdeck(interaction, name: str, jokers: bool = False):
+async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool = True):
     """Creates a deck."""
     new_deck = Deck.init_cards_default(jokers)
     new_deck.name = name
+    if shuffle:
+        new_deck.shuffle()
     new_game = Game(name, {}, {})
     new_game.add_deck(new_deck)
     card_data.add_game(new_game)
@@ -225,6 +227,15 @@ async def draw(interaction, deck: str):
     """Draws a card."""
     card = card_data.games[deck].decks[deck].draw()
     await interaction.response.send_message(card)
+
+@tree.command(
+    name="shuffle",
+    description="Shuffles a deck",
+)
+async def shuffle(interaction, deck: str):
+    """Draws a card."""
+    card = card_data.games[deck].decks[deck].shuffle()
+    await interaction.response.send_message("shuffled!")
 
 
 with open("token.txt") as f:
