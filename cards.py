@@ -79,7 +79,7 @@ class Deck:
         self.name = name
         self.cards = cards
         self.drawn = drawn
-        self.discard = discard
+        self.discarded = discard
 
     def shuffle(self):
         random.shuffle(self.cards)
@@ -90,7 +90,7 @@ class Deck:
         return drawn_card
 
     def discard(self, card):
-        self.discard.append(card)
+        self.discarded.append(card)
 
     def serialize(self):
         return {"name": self.name, "cards": [card.serialize() for card in self.cards],
