@@ -227,7 +227,7 @@ async def draw(interaction, deck: str):
     """Draws a card."""
     card = card_data.games[deck].decks[deck].draw()
     if interaction.user.id not in card_data.games[deck].hands:
-        card_data.games[deck].hands[interaction.user.id] = Hand([card], interaction.user.id)
+        card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
     card_data.games[deck].hands[interaction.user.id].add_card(card)
     await interaction.response.send_message(card, ephemeral=True)
 
@@ -241,6 +241,7 @@ async def hand(interaction, deck: str):
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
         await interaction.response.send_message(card_data.games[deck].hands[interaction.user.id], ephemeral=True)
+
 
 @tree.command(
     name="shuffle",
