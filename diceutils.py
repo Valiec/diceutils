@@ -301,6 +301,19 @@ async def discardhand(interaction, deck: str):
         del card_data.games[deck].hands[interaction.user.id]
         await interaction.response.send_message(f"Hand discarded.", ephemeral=True)
 
+
+@tree.command(
+    name="revealhand",
+    description="Reveals all cards in your hand",
+)
+async def revealhand(interaction, deck: str):
+    """Reveals all cards in your hand."""
+    if interaction.user.id not in card_data.games[deck].hands:
+        await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
+    else:
+        await interaction.response.send_message(", ".join(card_data.games[deck].hands[interaction.user.id].cards))
+
+
 @tree.command(
     name="deldeck",
     description="Deletes a deck",
