@@ -311,7 +311,7 @@ async def revealhand(interaction, deck: str):
     if interaction.user.id not in card_data.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
-        await interaction.response.send_message(", ".join(card_data.games[deck].hands[interaction.user.id].cards))
+        await interaction.response.send_message(", ".join([str(card) for card in card_data.games[deck].hands[interaction.user.id].cards]))
 
 
 @tree.command(
