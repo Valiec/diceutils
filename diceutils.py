@@ -240,6 +240,8 @@ async def draw(interaction, deck: str, count: int = 1):
 )
 async def hand(interaction, deck: str):
     """Shows your hand."""
+    if deck not in card_data.games or deck not in card_data.games[deck].decks:
+        await interaction.response.send_message(f"Deck {deck} does not exist.", ephemeral=True)
     if interaction.user.id not in card_data.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
@@ -301,7 +303,7 @@ async def deldeck(interaction, deck: str):
         del card_data.games[deck].decks[deck]
         if len(card_data.games[deck].decks) == 0:
             del card_data.games[deck]
-        await interaction.response.send_message(f"Deck {deck} has been cast into the Void.", ephemeral=True)
+        await interaction.response.send_message(f"Deck {deck} has been cast into the Void.")
 
 
 with open("token.txt") as f:
