@@ -166,5 +166,3 @@ class Card:
     @staticmethod
     def deserialize(card_data):
         return Card(card_data["suit"], card_data["num"], card_data["deck"])
-
-
