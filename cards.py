@@ -108,10 +108,10 @@ class Deck:
         cards = []
         for suit in ["Hearts", "Diamonds", "Spades", "Clubs"]:
             for num in ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]:
-                cards.append(Card(suit, num))
+                cards.append(Card(suit, num, name))
         if jokers:
-            cards.append(Card("red", "Joker"))
-            cards.append(Card("black", "Joker"))
+            cards.append(Card("red", "Joker", name))
+            cards.append(Card("black", "Joker", name))
 
         return Deck(name, cards, [], [])
 
@@ -129,9 +129,10 @@ class Deck:
         return Deck(deck_data["name"], loaded_cards, loaded_drawn, loaded_discard)
 
 class Card:
-    def __init__(self, suit, num):
+    def __init__(self, suit, num, deck):
         self.suit = suit
         self.num = num
+        self.deck = deck
         self.color = ""
         self.joker = False
 
@@ -160,10 +161,10 @@ class Card:
 
 
     def serialize(self):
-        return {"suit": self.suit, "num": self.num}
+        return {"suit": self.suit, "num": self.num, "deck": self.deck}
 
     @staticmethod
     def deserialize(card_data):
-        return Card(card_data["suit"], card_data["num"])
+        return Card(card_data["suit"], card_data["num"], card_data["deck"])
 
 

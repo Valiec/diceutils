@@ -5,7 +5,7 @@ import random
 import discord
 from discord import app_commands
 
-from cards import CardsData, Deck, Game, Hand, Card
+from cards import CardsData, Deck, Game, Hand
 from dice import too_many_dice, evaluate, tokenize, DiceError, valid_dice_roll, roll_all_dice, roll_init_cmd_helper
 
 tbhlist = ["Tbh", "Tbh is overused, tbh.", "*Tbh*",
@@ -284,6 +284,24 @@ async def discardhand(interaction, deck: str):
             card_data.games[deck].hands[interaction.user.id].discard(0, card_data.games[deck].decks[deck])
         del card_data.games[deck].hands[interaction.user.id]
         await interaction.response.send_message(f"Hand discarded.", ephemeral=True)
+
+@tree.command(
+    name="deldeck",
+    description="Deletes a deck",
+)
+async def deldeck(interaction, deck: str):
+    """Deletes a deck."""
+    if deck not in card_data.games or deck not in card_data.games[deck].decks:
+        await interaction.response.send_message(f"Deck {deck} does not exist.", ephemeral=True)
+    else:
+        for del_hand in card_data.games[deck].hands.values():
+            for card in del_hand.cards:
+                if card.deck == deck:
+                    del_hand.cards.remove(card)
+        del card_data.games[deck].decks[deck]
+        if len(card_data.games[deck].decks) == 0:
+            del card_data.games[deck]
+        await interaction.response.send_message(f"Deck {deck} has been cast into the Void.", ephemeral=True)
 
 
 with open("token.txt") as f:
