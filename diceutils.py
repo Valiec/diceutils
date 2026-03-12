@@ -267,7 +267,7 @@ async def forceshuffle(interaction, deck: str):
     """Draws a card."""
     if deck not in card_data.games or deck not in card_data.games[deck].decks:
         await interaction.response.send_message(f"Deck {deck} does not exist.", ephemeral=True)
-    for hand in card_data.games[deck].hands:
+    for hand in card_data.games[deck].hands.values():
         for card in hand.cards:
             if card.deck == deck:
                 hand.cards.remove(card)
