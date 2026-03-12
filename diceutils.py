@@ -298,6 +298,8 @@ async def forceshuffle(interaction, deck: str):
             if card.deck != deck:
                 new_cards.append(card)
         hand.cards = new_cards
+        if len(hand.cards) == 0:
+            del card_data.games[deck].hands[hand.member]
     card_data.games[deck].decks[deck].shuffle(include_drawn=True)
     await interaction.response.send_message(f"Deck {deck} shuffled, including cards in hands.")
 
