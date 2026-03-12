@@ -209,7 +209,7 @@ async def say(interaction, text: str):
 )
 async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool = True):
     """Creates a deck."""
-    new_deck = Deck.init_cards_default(jokers)
+    new_deck = Deck.init_cards_default(name, jokers)
     new_deck.name = name
     if shuffle:
         new_deck.shuffle()
