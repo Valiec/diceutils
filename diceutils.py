@@ -257,6 +257,19 @@ async def shuffle(interaction, deck: str):
     card_data.games[deck].decks[deck].shuffle()
     await interaction.response.send_message(f"Deck {deck} shuffled.")
 
+@tree.command(
+    name="forceshuffle",
+    description="Shuffles a deck, removing all its cards from hands",
+)
+async def forceshuffle(interaction, deck: str):
+    """Draws a card."""
+    for hand in card_data.games[deck].hands:
+        for card in hand.cards:
+            if card.deck == deck:
+                hand.cards.remove(card)
+    card_data.games[deck].decks[deck].shuffle(include_drawn=True)
+    await interaction.response.send_message(f"Deck {deck} shuffled, including cards in hands.")
+
 
 @tree.command(
     name="discard",

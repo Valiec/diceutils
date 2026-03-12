@@ -87,7 +87,13 @@ class Deck:
         self.drawn = drawn
         self.discarded = discard
 
-    def shuffle(self):
+    def shuffle(self, include_discarded=True, include_drawn=False):
+        if include_discarded:
+            self.cards.extend(self.discarded)
+            self.discarded = []
+        if include_drawn:
+            self.cards.extend(self.drawn)
+            self.drawn = []
         random.shuffle(self.cards)
 
     def draw(self):
