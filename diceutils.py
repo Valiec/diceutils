@@ -302,6 +302,7 @@ async def forceshuffle(interaction, deck: str):
     """Draws a card."""
     if deck not in card_data.games or deck not in card_data.games[deck].decks:
         await interaction.response.send_message(f"Deck {deck} does not exist.", ephemeral=True)
+    hands_to_delete = []
     for hand in card_data.games[deck].hands.values():
         new_cards = []
         for card in hand.cards:
@@ -309,7 +310,9 @@ async def forceshuffle(interaction, deck: str):
                 new_cards.append(card)
         hand.cards = new_cards
         if len(hand.cards) == 0:
-            del card_data.games[deck].hands[hand.member]
+            hands_to_delete.append(hand.member)
+    for del_hand in hands_to_delete:
+        del card_data.games[deck].decks[deck].hands[del_hand]
     card_data.games[deck].decks[deck].shuffle(include_drawn=True)
     await interaction.response.send_message(f"Deck {deck} shuffled, including cards in hands.")
 
