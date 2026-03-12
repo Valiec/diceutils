@@ -225,14 +225,17 @@ async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool
 )
 async def draw(interaction, deck: str, count: int = 1):
     """Draws a card."""
-    drawn_cards = []
-    for _ in range(count):
-        drawn_card = card_data.games[deck].decks[deck].draw()
-        drawn_cards.append(drawn_card)
-        if interaction.user.id not in card_data.games[deck].hands:
-            card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
-        card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
-    await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
+    if len(card_data.games[deck].decks[deck].discarded) == 0:
+        await interaction.response.send_message("The deck is empty.", ephemeral=True)
+    else:
+        drawn_cards = []
+        for _ in range(count):
+            drawn_card = card_data.games[deck].decks[deck].draw()
+            drawn_cards.append(drawn_card)
+            if interaction.user.id not in card_data.games[deck].hands:
+                card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
+            card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
+        await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
 
 
 @tree.command(
@@ -241,14 +244,17 @@ async def draw(interaction, deck: str, count: int = 1):
 )
 async def drawdiscard(interaction, deck: str, count: int = 1):
     """Draws a card."""
-    drawn_cards = []
-    for _ in range(count):
-        drawn_card = card_data.games[deck].decks[deck].draw_discard()
-        drawn_cards.append(drawn_card)
-        if interaction.user.id not in card_data.games[deck].hands:
-            card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
-        card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
-    await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
+    if len(card_data.games[deck].decks[deck].discarded) == 0:
+        await interaction.response.send_message("The discard pile is empty.", ephemeral=True)
+    else:
+        drawn_cards = []
+        for _ in range(count):
+            drawn_card = card_data.games[deck].decks[deck].draw_discard()
+            drawn_cards.append(drawn_card)
+            if interaction.user.id not in card_data.games[deck].hands:
+                card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
+            card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
+        await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
 
 @tree.command(
     name="peekdiscard",
@@ -256,8 +262,10 @@ async def drawdiscard(interaction, deck: str, count: int = 1):
 )
 async def peekdiscard(interaction, deck: str):
     """Draws a card."""
-    drawn_cards = []
-    await interaction.response.send_message(card_data.games[deck].decks[deck].discarded[-1])
+    if len(card_data.games[deck].decks[deck].discarded) == 0:
+        await interaction.response.send_message("The discard pile is empty.")
+    else:
+        await interaction.response.send_message(card_data.games[deck].decks[deck].discarded[-1])
 
 @tree.command(
     name="hand",
@@ -270,7 +278,8 @@ async def hand(interaction, deck: str):
     if interaction.user.id not in card_data.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
-        await interaction.response.send_message(card_data.games[deck].hands[interaction.user.id], ephemeral=True)
+        msg = card_data.games[deck].hands[interaction.user.id]
+        await interaction.response.send_message(msg if len(msg) > 0 else "Your hand is empty.", ephemeral=True)
 
 
 @tree.command(
