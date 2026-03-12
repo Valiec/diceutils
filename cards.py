@@ -101,8 +101,14 @@ class Deck:
         self.drawn.append(drawn_card)
         return drawn_card
 
+    def draw_discard(self):
+        drawn_card = self.discarded.pop()
+        self.drawn.append(drawn_card)
+        return drawn_card
+
     def discard(self, card):
         self.discarded.append(card)
+        self.drawn.remove(card)
 
     def serialize(self):
         return {"name": self.name, "cards": [card.serialize() for card in self.cards],

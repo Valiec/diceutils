@@ -234,6 +234,31 @@ async def draw(interaction, deck: str, count: int = 1):
         card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
     await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
 
+
+@tree.command(
+    name="drawdiscard",
+    description="Draws a card from the discard pile",
+)
+async def drawdiscard(interaction, deck: str, count: int = 1):
+    """Draws a card."""
+    drawn_cards = []
+    for _ in range(count):
+        drawn_card = card_data.games[deck].decks[deck].draw_discard()
+        drawn_cards.append(drawn_card)
+        if interaction.user.id not in card_data.games[deck].hands:
+            card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
+        card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
+    await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
+
+@tree.command(
+    name="peekdiscard",
+    description="Shows the top card on the discard pile",
+)
+async def peekdiscard(interaction, deck: str):
+    """Draws a card."""
+    drawn_cards = []
+    await interaction.response.send_message(card_data.games[deck].decks[deck].discarded[-1])
+
 @tree.command(
     name="hand",
     description="See your hand",
