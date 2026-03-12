@@ -97,11 +97,15 @@ class Deck:
         random.shuffle(self.cards)
 
     def draw(self):
+        if len(self.cards) == 0:
+            return None
         drawn_card = self.cards.pop()
         self.drawn.append(drawn_card)
         return drawn_card
 
     def draw_discard(self):
+        if len(self.discarded) == 0:
+            return None
         drawn_card = self.discarded.pop()
         self.drawn.append(drawn_card)
         return drawn_card

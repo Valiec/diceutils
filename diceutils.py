@@ -231,6 +231,8 @@ async def draw(interaction, deck: str, count: int = 1):
         drawn_cards = []
         for _ in range(count):
             drawn_card = card_data.games[deck].decks[deck].draw()
+            if drawn_card is None:
+                break  # deck is empty
             drawn_cards.append(drawn_card)
             if interaction.user.id not in card_data.games[deck].hands:
                 card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
@@ -250,6 +252,8 @@ async def drawdiscard(interaction, deck: str, count: int = 1):
         drawn_cards = []
         for _ in range(count):
             drawn_card = card_data.games[deck].decks[deck].draw_discard()
+            if drawn_card is None:
+                break  # deck is empty
             drawn_cards.append(drawn_card)
             if interaction.user.id not in card_data.games[deck].hands:
                 card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
@@ -312,7 +316,7 @@ async def forceshuffle(interaction, deck: str):
         if len(hand.cards) == 0:
             hands_to_delete.append(hand.member)
     for del_hand in hands_to_delete:
-        del card_data.games[deck].decks[deck].hands[del_hand]
+        del card_data.games[deck].hands[del_hand]
     card_data.games[deck].decks[deck].shuffle(include_drawn=True)
     await interaction.response.send_message(f"Deck {deck} shuffled, including cards in hands.")
 
