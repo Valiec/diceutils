@@ -293,9 +293,11 @@ async def forceshuffle(interaction, deck: str):
     if deck not in card_data.games or deck not in card_data.games[deck].decks:
         await interaction.response.send_message(f"Deck {deck} does not exist.", ephemeral=True)
     for hand in card_data.games[deck].hands.values():
+        new_cards = []
         for card in hand.cards:
-            if card.deck == deck:
-                hand.cards.remove(card)
+            if card.deck != deck:
+                new_cards.append(card)
+        hand.cards = new_cards
     card_data.games[deck].decks[deck].shuffle(include_drawn=True)
     await interaction.response.send_message(f"Deck {deck} shuffled, including cards in hands.")
 
