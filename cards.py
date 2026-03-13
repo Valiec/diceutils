@@ -88,6 +88,9 @@ class ChipHand:
         self.pot = pot
         self.member = member
         self.chips = chips
+        if self.chips == {}:
+            for color in valid_chip_colors:
+                self.chips[color] = 0
 
     def play_chip(self, color, pot):
         if color in self.chips and self.chips["color"] > 0:
