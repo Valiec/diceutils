@@ -93,9 +93,9 @@ class ChipHand:
                 self.chips[color] = 0
 
     def play_chip(self, color, pot):
-        if color in self.chips and self.chips["color"] > 0:
-            self.chips["color"] -= 1
-            pot.chips["color"] += 1
+        if color in self.chips and self.chips[color] > 0:
+            self.chips[color] -= 1
+            pot.chips[color] += 1
 
     def add_chips(self, color, count):
         if color not in self.chips:
