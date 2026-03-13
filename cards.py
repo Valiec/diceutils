@@ -1,26 +1,103 @@
 import random
 
+valid_chip_colors = ["red", "white", "blue"]
+
 class CardsData:
-    def __init__(self, games):
+    def __init__(self, games, pots):
         self.games = games
+        self.pots = pots
 
     def add_game(self, game):
         self.games[game.name] = game
 
     def serialize(self):
-        return [game.serialize() for game in self.games.values()]
+        return {"games": [game.serialize() for game in self.games.values()], "pots": [pot.serialize() for pot in self.pots.values()]}
 
     @staticmethod
     def deserialize(cards_data):
         loaded_games = {}
-        for game in cards_data:
+        for game in cards_data["games"]:
             loaded_game = Game.deserialize(game)
             loaded_games[loaded_game.name] = loaded_game
-        return CardsData(loaded_games)
+        loaded_pots = {}
+        for pot in cards_data["pots"]:
+            loaded_pot = ChipPot.deserialize(pot)
+            loaded_pots[loaded_pot.name] = loaded_pot
+        return CardsData(loaded_games, loaded_pots)
 
     @staticmethod
     def setup():
         return CardsData({})
+
+class ChipPot:
+    def __init__(self, name, chips, hands):
+        self.name = name
+        self.chips = chips
+        self.hands = hands
+
+    def draw_chips_rand(self, count=1):
+        chips_drawn = []
+        for _ in range(count):
+            total_chip_count = sum(self.chips.values())
+            if total_chip_count == 0:
+                break
+            rand_num = random.randint(1, total_chip_count)
+            if rand_num <= self.chips["red"]:
+                color = "red"
+            elif rand_num <= self.chips["red"]+self.chips["white"]:
+                color = "white"
+            else:
+                color = "blue"
+            self.chips[color] -= 1
+            chips_drawn.append(color)
+        return chips_drawn
+
+
+    def draw_chips(self, color, count=1):
+        if color in self.chips and self.chips[color] >= count:
+            self.chips[color] -= count
+            return True
+        return False
+
+    def serialize(self):
+        return {"chips": self.chips, "hands": [hand.serialize() for hand in self.hands.values()]}
+
+    @staticmethod
+    def init_pot(name, red, white, blue):
+        return ChipPot(name, {"red": red, "white": white, "blue": blue}, {})
+
+    @staticmethod
+    def deserialize(pot_data):
+        loaded_hands = {}
+        for chip_hand in pot_data["hands"]:
+            hand = Hand.deserialize(chip_hand)
+            loaded_hands[hand.member] = hand
+        loaded_chips = {}
+        for chip_color in pot_data["chips"]:
+                loaded_chips[chip_color] = chip_color
+        return ChipPot(pot_data["name"], loaded_hands, loaded_chips)
+
+class ChipHand:
+    def __init__(self, pot, member, chips):
+        self.pot = pot
+        self.member = member
+        self.chips = chips
+
+    def play_chip(self, color, pot):
+        if color in self.chips and self.chips["color"] > 0:
+            self.chips["color"] -= 1
+            pot.chips["color"] += 1
+
+    def serialize(self):
+        return {"pot": self.pot, "member": self.member, "chips": self.chips}
+
+    @staticmethod
+    def deserialize(hand_data):
+        loaded_chips = {}
+        for chip_color in hand_data["chips"]:
+                loaded_chips[chip_color] = chip_color
+        return ChipHand(hand_data["pot"], hand_data["member"], loaded_chips)
+
 
 class Game:
     def __init__(self, name, decks, hands):
