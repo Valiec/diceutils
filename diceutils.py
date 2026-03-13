@@ -264,7 +264,7 @@ async def cplay(interaction, pot: str, color: str, count: int = 1):
     elif card_data.pots[pot].hands[interaction.user.id].chips[color] == 0:
         await interaction.response.send_message(f"You have no {color} chips.", ephemeral=True)
     elif card_data.pots[pot].hands[interaction.user.id].chips[color] < count:
-        await interaction.response.send_message(f"The pot has insufficient {color} chips.", ephemeral=True)
+        await interaction.response.send_message(f"You have insufficient {color} chips.", ephemeral=True)
     else:
         for _ in range(count):
             card_data.pots[pot].hands[interaction.user.id].play_chip(color, card_data.pots[pot])
