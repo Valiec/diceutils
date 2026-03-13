@@ -289,7 +289,7 @@ async def cview(interaction, pot: str):
 )
 async def crdraw(interaction, pot: str, count: int = 1):
     """Draws a card."""
-    chip_counts = {}
+    chip_counts = {"white": 0, "red": 0, "blue": 0}
     if card_data.pots[pot].get_chip_count() == 0:
         await interaction.response.send_message("The pot is empty.", ephemeral=True)
     elif card_data.pots[pot].get_chip_count() < count:
@@ -300,8 +300,6 @@ async def crdraw(interaction, pot: str, count: int = 1):
             card_data.pots[pot].hands[interaction.user.id] = cards.ChipHand(pot, interaction.user.id, {})
         for chip in chips_drawn:
             card_data.pots[pot].hands[interaction.user.id].add_chips(chip, 1)
-            if chip not in chip_counts:
-                chip_counts[chip] = 0
             chip_counts[chip] += 1
         await interaction.response.send_message(f"{count} chips drawn, {chip_counts['white']} white, "
                                                 f"{chip_counts['red']} red, {chip_counts['blue']} blue.",
