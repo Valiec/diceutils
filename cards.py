@@ -10,6 +10,9 @@ class CardsData:
     def add_game(self, game):
         self.games[game.name] = game
 
+    def add_pot(self, pot):
+        self.pots[pot.name] = pot
+
     def serialize(self):
         return {"games": [game.serialize() for game in self.games.values()], "pots": [pot.serialize() for pot in self.pots.values()]}
 
@@ -58,6 +61,9 @@ class ChipPot:
             self.chips[color] -= count
             return True
         return False
+
+    def get_chip_count(self):
+        return sum(self.chips.values())
 
     def serialize(self):
         return {"chips": self.chips, "hands": [hand.serialize() for hand in self.hands.values()]}
