@@ -81,7 +81,7 @@ class ChipPot:
         loaded_chips = {}
         for chip_color in pot_data["chips"]:
                 loaded_chips[chip_color] = chip_color
-        return ChipPot(pot_data["name"], loaded_hands, loaded_chips)
+        return ChipPot(pot_data["name"], loaded_chips, loaded_hands)
 
 class ChipHand:
     def __init__(self, pot, member, chips):
