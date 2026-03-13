@@ -94,6 +94,11 @@ class ChipHand:
             self.chips["color"] -= 1
             pot.chips["color"] += 1
 
+    def add_chips(self, color, count):
+        if color not in self.chips:
+            self.chips[color] = 0
+        self.chips[color] += count
+
     def serialize(self):
         return {"pot": self.pot, "member": self.member, "chips": self.chips}
 

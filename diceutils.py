@@ -246,7 +246,7 @@ async def cdraw(interaction, pot: str, color: str, count: int = 1):
         card_data.pots[pot].draw_chips(color, count)
         if interaction.user.id not in card_data.pots[pot].hands:
             card_data.pots[pot].hands[interaction.user.id] = cards.ChipHand(pot, interaction.user.id, {})
-        card_data.pots[pot].hands[interaction.user.id].chips[color] += count
+        card_data.pots[pot].hands[interaction.user.id].add_chips(color, count)
         await interaction.response.send_message(f"{count} {color} chips drawn.", ephemeral=True)
 
 @tree.command(
@@ -299,7 +299,7 @@ async def crdraw(interaction, pot: str, count: int = 1):
         if interaction.user.id not in card_data.pots[pot].hands:
             card_data.pots[pot].hands[interaction.user.id] = cards.ChipHand(pot, interaction.user.id, {})
         for chip in chips_drawn:
-            card_data.pots[pot].hands[interaction.user.id].chips[chip] += count
+            card_data.pots[pot].hands[interaction.user.id].add_chips(chip, 1)
             if chip not in chip_counts:
                 chip_counts[chip] = 0
             chip_counts[chip] += 1
