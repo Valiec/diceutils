@@ -238,7 +238,7 @@ async def cdraw(interaction, pot: str, color: str, count: int = 1):
         await interaction.response.send_message("The pot is empty.", ephemeral=True)
     elif color not in cards.valid_chip_colors:
         await interaction.response.send_message(f"Invalid color {color}", ephemeral=True)
-    elif card_data.pots[pot].chips[color]:
+    elif card_data.pots[pot].chips[color] == 0:
         await interaction.response.send_message(f"The pot has no {color} chips.", ephemeral=True)
     elif card_data.pots[pot].chips[color] < count:
         await interaction.response.send_message(f"The pot has insufficient {color} chips.", ephemeral=True)
