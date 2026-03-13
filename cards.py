@@ -80,7 +80,7 @@ class ChipPot:
             loaded_hands[hand.member] = hand
         loaded_chips = {}
         for chip_color in pot_data["chips"]:
-                loaded_chips[chip_color] = chip_color
+                loaded_chips[chip_color] = pot_data["chips"][chip_color]
         return ChipPot(pot_data["name"], loaded_chips, loaded_hands)
 
 class ChipHand:
