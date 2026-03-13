@@ -269,7 +269,9 @@ async def crdraw(interaction, pot: str, count: int = 1):
             if chip not in chip_counts:
                 chip_counts[chip] = 0
             chip_counts[chip] += 1
-        await interaction.response.send_message(f"{count} chips drawn, {chip_counts["white"]} white, {chip_counts["red"]} red, {chip_counts["blue"]} blue.", ephemeral=True)
+        await interaction.response.send_message(f"{count} chips drawn, {chip_counts['white']} white, "
+                                                f"{chip_counts['red']} red, {chip_counts['blue']} blue.",
+                                                ephemeral=True)
 
 @tree.command(
     name="createdeck",
