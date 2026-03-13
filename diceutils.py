@@ -243,11 +243,45 @@ async def cdraw(interaction, pot: str, color: str, count: int = 1):
     elif card_data.pots[pot].chips[color] < count:
         await interaction.response.send_message(f"The pot has insufficient {color} chips.", ephemeral=True)
     else:
-        card_data.pots[pot].draw_chip(color, count)
+        card_data.pots[pot].draw_chips(color, count)
         if interaction.user.id not in card_data.pots[pot].hands:
             card_data.pots[pot].hands[interaction.user.id] = cards.ChipHand([], interaction.user.id)
         card_data.pots[pot].hands[interaction.user.id].chips[color] += count
         await interaction.response.send_message(f"{count} {color} chips drawn.", ephemeral=True)
+
+@tree.command(
+    name="cplay",
+    description="Plays a chip",
+)
+async def cplay(interaction, pot: str, color: str, count: int = 1):
+    """Draws a card."""
+    if pot not in card_data.pots:
+        await interaction.response.send_message(f"Pot {pot} does not exist.", ephemeral=True)
+    elif interaction.user.id not in card_data.pots[pot].hands:
+        await interaction.response.send_message(f"You have no hand for this pot.", ephemeral=True)
+    elif color not in cards.valid_chip_colors:
+        await interaction.response.send_message(f"Invalid color {color}", ephemeral=True)
+    elif card_data.pots[pot].hands[interaction.user.id].chips[color] == 0:
+        await interaction.response.send_message(f"You have no {color} chips.", ephemeral=True)
+    elif card_data.pots[pot].hands[interaction.user.id].chips[color] < count:
+        await interaction.response.send_message(f"The pot has insufficient {color} chips.", ephemeral=True)
+    else:
+        for _ in range(count):
+            card_data.pots[pot].hands[interaction.user.id].play_chip(color, pot)
+        await interaction.response.send_message(f"{count} {color} chips played.", ephemeral=True)
+
+@tree.command(
+    name="cview",
+    description="Views your chips",
+)
+async def cview(interaction, pot: str):
+    """Draws a card."""
+    if pot not in card_data.pots:
+        await interaction.response.send_message(f"Pot {pot} does not exist.", ephemeral=True)
+    elif interaction.user.id not in card_data.pots[pot].hands:
+        await interaction.response.send_message(f"You have no hand for this pot.", ephemeral=True)
+    hand_chips = card_data.pots[pot].hands[interaction.user.id].chips
+    await interaction.response.send_message(f"You have {hand_chips['white']} white chips, {hand_chips['red']} red chips, and {hand_chips['blue']} blue chips", ephemeral=True)
 
 @tree.command(
     name="crdraw",
@@ -261,7 +295,7 @@ async def crdraw(interaction, pot: str, count: int = 1):
     elif card_data.pots[pot].get_chip_count() < count:
         await interaction.response.send_message(f"The pot has insufficient chips.", ephemeral=True)
     else:
-        chips_drawn = card_data.pots[pot].draw_chip_rand(count)
+        chips_drawn = card_data.pots[pot].draw_chips_rand(count)
         if interaction.user.id not in card_data.pots[pot].hands:
             card_data.pots[pot].hands[interaction.user.id] = cards.ChipHand([], interaction.user.id)
         for chip in chips_drawn:
@@ -308,7 +342,6 @@ async def draw(interaction, deck: str, count: int = 1):
                 card_data.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
             card_data.games[deck].hands[interaction.user.id].add_card(drawn_card)
         await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
-
 
 @tree.command(
     name="drawdiscard",
