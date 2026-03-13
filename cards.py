@@ -66,7 +66,7 @@ class ChipPot:
         return sum(self.chips.values())
 
     def serialize(self):
-        return {"chips": self.chips, "hands": [hand.serialize() for hand in self.hands.values()]}
+        return {"name": self.name, "chips": self.chips, "hands": [hand.serialize() for hand in self.hands.values()]}
 
     @staticmethod
     def init_pot(name, red, white, blue):
