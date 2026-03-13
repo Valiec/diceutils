@@ -76,7 +76,7 @@ class ChipPot:
     def deserialize(pot_data):
         loaded_hands = {}
         for chip_hand in pot_data["hands"]:
-            hand = Hand.deserialize(chip_hand)
+            hand = ChipHand.deserialize(chip_hand)
             loaded_hands[hand.member] = hand
         loaded_chips = {}
         for chip_color in pot_data["chips"]:
