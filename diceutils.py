@@ -267,7 +267,7 @@ async def cplay(interaction, pot: str, color: str, count: int = 1):
         await interaction.response.send_message(f"The pot has insufficient {color} chips.", ephemeral=True)
     else:
         for _ in range(count):
-            card_data.pots[pot].hands[interaction.user.id].play_chip(color, pot)
+            card_data.pots[pot].hands[interaction.user.id].play_chip(color, card_data.pots[pot])
         await interaction.response.send_message(f"{count} {color} chips played.", ephemeral=True)
 
 @tree.command(
