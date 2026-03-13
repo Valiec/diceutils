@@ -109,7 +109,7 @@ class ChipHand:
     def deserialize(hand_data):
         loaded_chips = {}
         for chip_color in hand_data["chips"]:
-                loaded_chips[chip_color] = chip_color
+                loaded_chips[chip_color] = hand_data["chips"][chip_color]
         return ChipHand(hand_data["pot"], hand_data["member"], loaded_chips)
 
 
