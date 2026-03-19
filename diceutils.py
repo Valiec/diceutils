@@ -496,10 +496,6 @@ async def deldeck(interaction, deck: str):
             del card_data.games[deck]
         await interaction.response.send_message(f"Deck {deck} has been cast into the Void.")
 
-
-with open("token.txt") as f:
-    discord_api_token = f.read().strip()
-
 if os.path.exists("cards.json"):
     with open("cards.json") as f:
         card_data = CardsData.deserialize(json.load(f))
@@ -509,7 +505,7 @@ else:
 
 
 if __name__ == '__main__':
-    client.run(discord_api_token)
+    client.run(os.environ['DISCORD_TOKEN'])
 
 # this is outside the with block so that this failing doesn't wipe the file
 cards_dict = card_data.serialize()
