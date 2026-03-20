@@ -273,9 +273,9 @@ async def cdraw(interaction, pot: str, color: str, count: int = 1):
         await interaction.response.send_message(f"The pot has insufficient {color} chips.", ephemeral=True)
     else:
         server.pots[pot].draw_chips(color, count)
-        if interaction.user.id not in server.pots[pot].hands:
-            server.pots[pot].hands[interaction.user.id] = cards.ChipHand(pot, interaction.user.id, {})
-        server.pots[pot].hands[interaction.user.id].add_chips(color, count)
+        if str(interaction.user.id) not in server.pots[pot].hands:
+            server.pots[pot].hands[str(interaction.user.id)] = cards.ChipHand(pot, str(interaction.user.id), {})
+        server.pots[pot].hands[str(interaction.user.id)].add_chips(color, count)
         await interaction.response.send_message(f"{count} {color} chips drawn.", ephemeral=True)
 
 @tree.command(
@@ -287,17 +287,17 @@ async def cplay(interaction, pot: str, color: str, count: int = 1):
     server = card_data.get_server_or_create(interaction.guild_id)
     if pot not in server.pots:
         await interaction.response.send_message(f"Pot {pot} does not exist.", ephemeral=True)
-    elif interaction.user.id not in server.pots[pot].hands:
+    elif str(interaction.user.id) not in server.pots[pot].hands:
         await interaction.response.send_message(f"You have no hand for this pot.", ephemeral=True)
     elif color not in cards.valid_chip_colors:
         await interaction.response.send_message(f"Invalid color {color}", ephemeral=True)
-    elif server.pots[pot].hands[interaction.user.id].chips[color] == 0:
+    elif server.pots[pot].hands[str(interaction.user.id)].chips[color] == 0:
         await interaction.response.send_message(f"You have no {color} chips.", ephemeral=True)
-    elif server.pots[pot].hands[interaction.user.id].chips[color] < count:
+    elif server.pots[pot].hands[str(interaction.user.id)].chips[color] < count:
         await interaction.response.send_message(f"You have insufficient {color} chips.", ephemeral=True)
     else:
         for _ in range(count):
-            server.pots[pot].hands[interaction.user.id].play_chip(color, server.pots[pot])
+            server.pots[pot].hands[str(interaction.user.id)].play_chip(color, server.pots[pot])
         await interaction.response.send_message(f"{count} {color} chips played.", ephemeral=True)
 
 @tree.command(
@@ -309,9 +309,9 @@ async def cview(interaction, pot: str):
     server = card_data.get_server_or_create(interaction.guild_id)
     if pot not in server.pots:
         await interaction.response.send_message(f"Pot {pot} does not exist.", ephemeral=True)
-    elif interaction.user.id not in server.pots[pot].hands:
+    elif str(interaction.user.id) not in server.pots[pot].hands:
         await interaction.response.send_message(f"You have no hand for this pot.", ephemeral=True)
-    hand_chips = server.pots[pot].hands[interaction.user.id].chips
+    hand_chips = server.pots[pot].hands[str(interaction.user.id)].chips
     await interaction.response.send_message(f"You have {hand_chips['white']} white chips, {hand_chips['red']} red chips, and {hand_chips['blue']} blue chips", ephemeral=True)
 
 @tree.command(
@@ -328,10 +328,10 @@ async def crdraw(interaction, pot: str, count: int = 1):
         await interaction.response.send_message(f"The pot has insufficient chips.", ephemeral=True)
     else:
         chips_drawn = server.pots[pot].draw_chips_rand(count)
-        if interaction.user.id not in server.pots[pot].hands:
-            server.pots[pot].hands[interaction.user.id] = cards.ChipHand(pot, interaction.user.id, {})
+        if str(interaction.user.id) not in server.pots[pot].hands:
+            server.pots[pot].hands[str(interaction.user.id)] = cards.ChipHand(pot, str(interaction.user.id), {})
         for chip in chips_drawn:
-            server.pots[pot].hands[interaction.user.id].add_chips(chip, 1)
+            server.pots[pot].hands[str(interaction.user.id)].add_chips(chip, 1)
             chip_counts[chip] += 1
         await interaction.response.send_message(f"{count} chips drawn, {chip_counts['white']} white, "
                                                 f"{chip_counts['red']} red, {chip_counts['blue']} blue.",
@@ -373,9 +373,9 @@ async def draw(interaction, deck: str, count: int = 1):
             if drawn_card is None:
                 break  # deck is empty
             drawn_cards.append(drawn_card)
-            if interaction.user.id not in server.games[deck].hands:
-                server.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
-            server.games[deck].hands[interaction.user.id].add_card(drawn_card)
+            if str(interaction.user.id) not in server.games[deck].hands:
+                server.games[deck].hands[str(interaction.user.id)] = Hand([], str(interaction.user.id))
+            server.games[deck].hands[str(interaction.user.id)].add_card(drawn_card)
         await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
 
 @tree.command(
@@ -394,9 +394,9 @@ async def drawdiscard(interaction, deck: str, count: int = 1):
             if drawn_card is None:
                 break  # deck is empty
             drawn_cards.append(drawn_card)
-            if interaction.user.id not in server.games[deck].hands:
-                server.games[deck].hands[interaction.user.id] = Hand([], interaction.user.id)
-            server.games[deck].hands[interaction.user.id].add_card(drawn_card)
+            if str(interaction.user.id) not in server.games[deck].hands:
+                server.games[deck].hands[str(interaction.user.id)] = Hand([], str(interaction.user.id))
+            server.games[deck].hands[str(interaction.user.id)].add_card(drawn_card)
         await interaction.response.send_message(", ".join([str(card) for card in drawn_cards]), ephemeral=True)
 
 @tree.command(
@@ -420,10 +420,10 @@ async def hand(interaction, deck: str):
     server = card_data.get_server_or_create(interaction.guild_id)
     if deck not in server.games or deck not in server.games[deck].decks:
         await interaction.response.send_message(f"Deck {deck} does not exist.", ephemeral=True)
-    if interaction.user.id not in server.games[deck].hands:
+    if str(interaction.user.id) not in server.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
-        display_hand = server.games[deck].hands[interaction.user.id]
+        display_hand = server.games[deck].hands[str(interaction.user.id)]
         await interaction.response.send_message(display_hand if len(display_hand.cards) > 0
                                                 else "Your hand is empty.", ephemeral=True)
 
@@ -471,12 +471,12 @@ async def forceshuffle(interaction, deck: str):
 async def discard(interaction, deck: str, index: int):
     """Discards a card."""
     server = card_data.get_server_or_create(interaction.guild_id)
-    if interaction.user.id not in server.games[deck].hands:
+    if str(interaction.user.id) not in server.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
-    elif index < 1 or index > len(server.games[deck].hands[interaction.user.id].cards):
+    elif index < 1 or index > len(server.games[deck].hands[str(interaction.user.id)].cards):
         await interaction.response.send_message("Card index out of range.", ephemeral=True)
     else:
-        card = server.games[deck].hands[interaction.user.id].discard(index-1, server.games[deck].decks[deck])
+        card = server.games[deck].hands[str(interaction.user.id)].discard(index-1, server.games[deck].decks[deck])
         await interaction.response.send_message(f"{card} discarded.", ephemeral=True)
 
 @tree.command(
@@ -486,12 +486,12 @@ async def discard(interaction, deck: str, index: int):
 async def reveal(interaction, deck: str, index: int):
     """Reveals a card."""
     server = card_data.get_server_or_create(interaction.guild_id)
-    if interaction.user.id not in server.games[deck].hands:
+    if str(interaction.user.id) not in server.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
-    elif index < 1 or index > len(server.games[deck].hands[interaction.user.id].cards):
+    elif index < 1 or index > len(server.games[deck].hands[str(interaction.user.id)].cards):
         await interaction.response.send_message("Card index out of range.", ephemeral=True)
     else:
-        card = server.games[deck].hands[interaction.user.id].cards[index-1]
+        card = server.games[deck].hands[str(interaction.user.id)].cards[index-1]
         await interaction.response.send_message(card)
 
 
@@ -502,12 +502,12 @@ async def reveal(interaction, deck: str, index: int):
 async def discardhand(interaction, deck: str):
     """Discards all cards in your hand."""
     server = card_data.get_server_or_create(interaction.guild_id)
-    if interaction.user.id not in server.games[deck].hands:
+    if str(interaction.user.id) not in server.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
-        for _ in server.games[deck].hands[interaction.user.id].cards:
-            server.games[deck].hands[interaction.user.id].discard(0, server.games[deck].decks[deck])
-        del server.games[deck].hands[interaction.user.id]
+        for _ in server.games[deck].hands[str(interaction.user.id)].cards:
+            server.games[deck].hands[str(interaction.user.id)].discard(0, server.games[deck].decks[deck])
+        del server.games[deck].hands[str(interaction.user.id)]
         await interaction.response.send_message(f"Hand discarded.", ephemeral=True)
 
 
@@ -518,10 +518,10 @@ async def discardhand(interaction, deck: str):
 async def revealhand(interaction, deck: str):
     """Reveals all cards in your hand."""
     server = card_data.get_server_or_create(interaction.guild_id)
-    if interaction.user.id not in server.games[deck].hands:
+    if str(interaction.user.id) not in server.games[deck].hands:
         await interaction.response.send_message("You do not have a hand for this deck.", ephemeral=True)
     else:
-        await interaction.response.send_message(", ".join([str(card) for card in server.games[deck].hands[interaction.user.id].cards]))
+        await interaction.response.send_message(", ".join([str(card) for card in server.games[deck].hands[str(interaction.user.id)].cards]))
 
 
 @tree.command(

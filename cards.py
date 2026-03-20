@@ -10,9 +10,10 @@ class CardsData:
         self.servers[server.id] = server
 
     def get_server_or_create(self, server_id):
-        if server_id not in self.servers:
-            self.add_server(Server.setup(server_id))
-        return self.servers[server_id]
+        server_id_str = str(server_id)
+        if server_id_str not in self.servers:
+            self.add_server(Server.setup(server_id_str))
+        return self.servers[server_id_str]
 
     def serialize(self):
         return {"servers": [server.serialize() for server in self.servers.values()]}
