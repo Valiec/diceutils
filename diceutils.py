@@ -342,7 +342,8 @@ async def crdraw(interaction, pot: str, count: int = 1):
 )
 async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool = True):
     """Creates a deck."""
-    if name in card_data.get_server_or_create(interaction.guild_id).decks.keys():
+    if (name in card_data.get_server_or_create(interaction.guild_id).games.keys()
+            and card_data.get_server_or_create(interaction.guild_id).games[name].decks.keys()):
         await interaction.response.send_message(f"Deck {name} already exists.", ephemeral=True)
     else:
         new_deck = Deck.init_cards_default(name, jokers)
