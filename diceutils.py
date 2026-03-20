@@ -26,6 +26,29 @@ client = DiceUtils(intents=intents)
 
 tree = app_commands.CommandTree(client)
 
+@tree.command(
+    name="decks",
+    description="displays decks",
+)
+async def decks(interaction):
+    deck_names = []
+    for game in card_data.games.values():
+        deck_names.extend(game.decks.keys())
+    if len(deck_names) > 0:
+        await interaction.response.send_message("Decks: "+(", ".join(deck_names)))
+    else:
+        await interaction.response.send_message("There are no decks.", ephemeral=True)
+
+@tree.command(
+    name="pots",
+    description="displays pots",
+)
+async def pots(interaction):
+    pot_names = card_data.pots.keys()
+    if len(pot_names) > 0:
+        await interaction.response.send_message("Pots: "+(", ".join(pot_names)))
+    else:
+        await interaction.response.send_message("There are no pots.", ephemeral=True)
 
 @tree.command(
     name="calc",
