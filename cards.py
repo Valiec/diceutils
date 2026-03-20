@@ -11,24 +11,8 @@ class CardsData:
 
     def get_server_or_create(self, server_id):
         if server_id not in self.servers:
-            self.add_server(server_id)
+            self.add_server(Server.setup(server_id))
         return self.servers[server_id]
-
-    def add_game(self, game, server_id):
-        if server_id not in self.servers:
-            self.add_server(server_id)
-        self.servers[server_id].add_game(game)
-
-    def add_pot(self, pot, server_id):
-        if server_id not in self.servers:
-            self.add_server(server_id)
-        self.servers[server_id].add_pot(pot)
-
-    def get_game(self, game_name, server_id):
-        return self.servers[server_id].games[game_name]
-
-    def get_pot(self, pot_name, server_id):
-        return self.servers[server_id].pots[pot_name]
 
     def serialize(self):
         return {"servers": [server.serialize() for server in self.servers.values()]}
@@ -73,8 +57,8 @@ class Server:
         return Server(server_data["id"], loaded_games, loaded_pots)
 
     @staticmethod
-    def setup():
-        return Server({}, {})
+    def setup(server_id):
+        return Server(server_id,{}, {})
 
 class ChipPot:
     def __init__(self, name, chips, hands):
