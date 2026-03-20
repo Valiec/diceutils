@@ -3,6 +3,49 @@ import random
 valid_chip_colors = ["red", "white", "blue"]
 
 class CardsData:
+    def __init__(self, servers):
+        self.servers = servers
+
+    def add_server(self, server):
+        self.servers[server.id] = server
+
+    def get_server_or_create(self, server_id):
+        if server_id not in self.servers:
+            self.add_server(server_id)
+        return self.servers[server_id]
+
+    def add_game(self, game, server_id):
+        if server_id not in self.servers:
+            self.add_server(server_id)
+        self.servers[server_id].add_game(game)
+
+    def add_pot(self, pot, server_id):
+        if server_id not in self.servers:
+            self.add_server(server_id)
+        self.servers[server_id].add_pot(pot)
+
+    def get_game(self, game_name, server_id):
+        return self.servers[server_id].games[game_name]
+
+    def get_pot(self, pot_name, server_id):
+        return self.servers[server_id].pots[pot_name]
+
+    def serialize(self):
+        return {"servers": [server.serialize() for server in self.servers.values()]}
+
+    @staticmethod
+    def deserialize(cards_data):
+        loaded_servers = {}
+        for server in cards_data["servers"]:
+            loaded_server = Server.deserialize(server)
+            loaded_servers[loaded_server.id] = loaded_server
+        return CardsData(loaded_servers)
+
+    @staticmethod
+    def setup():
+        return CardsData({})
+
+class Server:
     def __init__(self, games, pots):
         self.games = games
         self.pots = pots
@@ -17,20 +60,20 @@ class CardsData:
         return {"games": [game.serialize() for game in self.games.values()], "pots": [pot.serialize() for pot in self.pots.values()]}
 
     @staticmethod
-    def deserialize(cards_data):
+    def deserialize(server_data):
         loaded_games = {}
-        for game in cards_data["games"]:
+        for game in server_data["games"]:
             loaded_game = Game.deserialize(game)
             loaded_games[loaded_game.name] = loaded_game
         loaded_pots = {}
-        for pot in cards_data["pots"]:
+        for pot in server_data["pots"]:
             loaded_pot = ChipPot.deserialize(pot)
             loaded_pots[loaded_pot.name] = loaded_pot
-        return CardsData(loaded_games, loaded_pots)
+        return Server(loaded_games, loaded_pots)
 
     @staticmethod
     def setup():
-        return CardsData({})
+        return Server({}, {})
 
 class ChipPot:
     def __init__(self, name, chips, hands):
