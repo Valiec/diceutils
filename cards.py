@@ -46,7 +46,8 @@ class CardsData:
         return CardsData({})
 
 class Server:
-    def __init__(self, games, pots):
+    def __init__(self, id, games, pots):
+        self.id = id
         self.games = games
         self.pots = pots
 
@@ -57,7 +58,7 @@ class Server:
         self.pots[pot.name] = pot
 
     def serialize(self):
-        return {"games": [game.serialize() for game in self.games.values()], "pots": [pot.serialize() for pot in self.pots.values()]}
+        return {"id": self.id, "games": [game.serialize() for game in self.games.values()], "pots": [pot.serialize() for pot in self.pots.values()]}
 
     @staticmethod
     def deserialize(server_data):
@@ -69,7 +70,7 @@ class Server:
         for pot in server_data["pots"]:
             loaded_pot = ChipPot.deserialize(pot)
             loaded_pots[loaded_pot.name] = loaded_pot
-        return Server(loaded_games, loaded_pots)
+        return Server(server_data["id"], loaded_games, loaded_pots)
 
     @staticmethod
     def setup():
