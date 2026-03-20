@@ -233,10 +233,13 @@ async def say(interaction, text: str):
 )
 async def createpot(interaction, name: str, red: int = 25, white: int = 50, blue: int = 10):
     """Creates a pot."""
-    new_pot = ChipPot.init_pot(name, red, white, blue)
-    new_pot.name = name
-    card_data.add_pot(new_pot, interaction.guild_id)
-    await interaction.response.send_message(f"Pot {name} created with {white} white chips, {red} red chips, and {blue} blue chips.")
+    if name in card_data.get_server_or_create(interaction.guild_id).pots.keys():
+        await interaction.response.send_message(f"Pot {name} already exists.", ephemeral=True)
+    else:
+        new_pot = ChipPot.init_pot(name, red, white, blue)
+        new_pot.name = name
+        card_data.add_pot(new_pot, interaction.guild_id)
+        await interaction.response.send_message(f"Pot {name} created with {white} white chips, {red} red chips, and {blue} blue chips.")
 
 @tree.command(
     name="delpot",
@@ -339,14 +342,17 @@ async def crdraw(interaction, pot: str, count: int = 1):
 )
 async def createdeck(interaction, name: str, jokers: bool = False, shuffle: bool = True):
     """Creates a deck."""
-    new_deck = Deck.init_cards_default(name, jokers)
-    new_deck.name = name
-    if shuffle:
-        new_deck.shuffle()
-    new_game = Game(name, {}, {})
-    new_game.add_deck(new_deck)
-    card_data.add_game(new_game, interaction.guild_id)
-    await interaction.response.send_message(f"Deck {name} created.")
+    if name in card_data.get_server_or_create(interaction.guild_id).decks.keys():
+        await interaction.response.send_message(f"Deck {name} already exists.", ephemeral=True)
+    else:
+        new_deck = Deck.init_cards_default(name, jokers)
+        new_deck.name = name
+        if shuffle:
+            new_deck.shuffle()
+        new_game = Game(name, {}, {})
+        new_game.add_deck(new_deck)
+        card_data.add_game(new_game, interaction.guild_id)
+        await interaction.response.send_message(f"Deck {name} created.")
 
 
 @tree.command(
