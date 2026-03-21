@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import random
@@ -9,6 +10,17 @@ from discord import app_commands
 import cards
 from cards import CardsData, Deck, Game, Hand, ChipPot
 from dice import too_many_dice, evaluate, tokenize, DiceError, valid_dice_roll, roll_all_dice, roll_init_cmd_helper
+
+parser = argparse.ArgumentParser(
+    prog='diceutils.py',
+    description='DiceUtils discord bot',
+    epilog='Created by Valiec')
+
+parser.add_argument('-c', '--cards', help='The path to the cards data JSON.', default="cards.json",
+                    required=False)
+
+args = parser.parse_args()
+
 
 tbhlist = ["Tbh", "Tbh is overused, tbh.", "*Tbh*",
            ":regional_indicator_t: :regional_indicator_b: :regional_indicator_h:", "**Tbh**",
@@ -547,7 +559,7 @@ async def deldeck(interaction, deck: str):
 
 def save_data():
     cards_dict = card_data.serialize()
-    with open("cards.json", "w") as f:
+    with open(args.cards, "w") as f:
         json.dump(cards_dict, f)
 
 def handle_signal(_signal_num, _frame):
@@ -556,8 +568,8 @@ def handle_signal(_signal_num, _frame):
 
 if __name__ == '__main__':
 
-    if os.path.exists("cards.json"):
-        with open("cards.json") as f:
+    if os.path.exists(args.cards):
+        with open(args.cards) as f:
             card_data = CardsData.deserialize(json.load(f))
         pass  # this is here because my IDE is being strange with the nested blocks
     else:
