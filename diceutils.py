@@ -544,24 +544,25 @@ async def deldeck(interaction, deck: str):
             del server.games[deck]
         await interaction.response.send_message(f"Deck {deck} has been cast into the Void.")
 
-if os.path.exists("cards.json"):
-    with open("cards.json") as f:
-        card_data = CardsData.deserialize(json.load(f))
-    pass  # this is here because my IDE is being strange with the nested blocks
-else:
-    card_data = CardsData.setup()
-
 
 def save_data():
     cards_dict = card_data.serialize()
     with open("cards.json", "w") as f:
         json.dump(cards_dict, f)
 
-def handle_signal(signal_num, frame):
+def handle_signal(_signal_num, _frame):
     save_data()
     raise SystemExit(0)
 
 if __name__ == '__main__':
+
+    if os.path.exists("cards.json"):
+        with open("cards.json") as f:
+            card_data = CardsData.deserialize(json.load(f))
+        pass  # this is here because my IDE is being strange with the nested blocks
+    else:
+        card_data = CardsData.setup()
+
     signal.signal(signal.SIGTERM, handle_signal)
     signal.signal(signal.SIGINT, handle_signal)
     client.run(os.environ['DISCORD_TOKEN'])
