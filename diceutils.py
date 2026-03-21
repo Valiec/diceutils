@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import signal
 
 import discord
 from discord import app_commands
@@ -551,10 +552,15 @@ else:
     card_data = CardsData.setup()
 
 
+def handle_sigterm(signal_num, frame):
+    raise KeyboardInterrupt()
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, handle_sigterm)
     client.run(os.environ['DISCORD_TOKEN'])
 
 # this is outside the with block so that this failing doesn't wipe the file
+print("Saving!")
 cards_dict = card_data.serialize()
 with open("cards.json", "w") as f:
     json.dump(cards_dict, f)
