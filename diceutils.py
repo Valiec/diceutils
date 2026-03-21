@@ -553,7 +553,6 @@ else:
 
 
 def save_data():
-    print("Saving!")
     cards_dict = card_data.serialize()
     with open("cards.json", "w") as f:
         json.dump(cards_dict, f)
