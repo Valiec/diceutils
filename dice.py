@@ -37,7 +37,7 @@ def valid_dice_roll(test_roll):
 
 def too_many_dice(test_roll, limit=5000):
     if len(test_roll) > 0 and test_roll[0].isnumeric():
-        if int(test_roll[0]) > 2000:
+        if int(test_roll[0]) > limit:
             return True
         return False
     return False
