@@ -69,12 +69,13 @@ async def pots(interaction):
 )
 async def calc(interaction, expr: str):
     tokens_all = []
+    await interaction.response.defer()
     try:
         tokens_all = tokenize(expr)
         result = evaluate(tokens_all)
-        await interaction.response.send_message("`" + expr + " -> " + str(tokens_all) + " -> " + str(result) + "`")
+        await interaction.followup.send("`" + expr + " -> " + str(tokens_all) + " -> " + str(result) + "`")
     except DiceError as err:
-        await interaction.response.send_message("Error: `" + expr + " -> " + str(tokens_all) + "`:\n" + err.message,
+        await interaction.followup.send("Error: `" + expr + " -> " + str(tokens_all) + "`:\n" + err.message,
                                                 ephemeral=True)
 
 
@@ -84,6 +85,7 @@ async def calc(interaction, expr: str):
 )
 async def roll(interaction, text: str):
     """Rolls dice."""
+    await interaction.response.defer()
     mod = 0
     if text.startswith("d"):
         text = "1" + text
@@ -122,9 +124,9 @@ async def roll(interaction, text: str):
             outlen -= 2000
         await interaction.response.send_message(outstr)
     elif too_many_dice(dice_roll):
-        await interaction.response.send_message("Error: `" + text + "` rolls more than 2000 dice.", ephemeral=True)
+        await interaction.followup.send("Error: `" + text + "` rolls more than 2000 dice.", ephemeral=True)
     else:
-        await interaction.response.send_message("Error: `" + text + "` is not a valid dice roll.", ephemeral=True)
+        await interaction.followup.send("Error: `" + text + "` is not a valid dice roll.", ephemeral=True)
 
 @tree.command(
     name="init",
