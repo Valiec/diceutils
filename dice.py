@@ -263,6 +263,17 @@ def eval_add_sub(tokens):
             raise DiceError("Invalid expression syntax")
     return tokens_pass4
 
+def count_dice(token):
+    if token[0].isnumeric():
+        token = "sum" + token
+
+    token = (token[3:]).split("d")
+
+    if len(token) == 0 or token[0].isnumeric():
+        return 0
+    else:
+        return int(token[0])
+
 
 def process_dice(token):
     if token[0].isnumeric():
@@ -314,6 +325,15 @@ def evaluate(tokens_pass0):
     print("Pass 1: " + str(tokens_pass1))
 
     tokens_pass1b = []
+
+    dice_count = 0
+    for token in tokens_pass1:
+        if "d" in token:
+            dice_count += count_dice(token)
+
+    if dice_count > 100000:
+        raise DiceError("Too many dice in expression!")
+
     for token in tokens_pass1:
         if "d" in token:
             tokens_pass1b.append(process_dice(token))
