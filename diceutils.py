@@ -122,7 +122,7 @@ async def roll(interaction, text: str):
             await interaction.followup.send(outstr[:2000])
             outstr = outstr[2000:]
             outlen -= 2000
-        await interaction.response.send_message(outstr)
+        await interaction.followup.send(outstr)
     elif too_many_dice(dice_roll):
         await interaction.followup.send("Error: `" + text + "` rolls more than 2000 dice.", ephemeral=True)
     else:
