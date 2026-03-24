@@ -1,5 +1,6 @@
 import multiprocessing
 import random
+import math
 
 
 class DiceError(Exception):
@@ -46,10 +47,13 @@ def roll_all_dice(ndice, dsize):
     tobjs = []
     results = []
     q = multiprocessing.Queue()
-    for i in range(10):
-        nd = ndice // 10
-        if i == 9:
-            nd += ndice % 10
+    max_procs = 10
+    min_dice_per_proc = 20
+    nthreads = min(math.ceil(ndice / min_dice_per_proc), max_procs)
+    for i in range(nthreads):
+        nd = ndice // nthreads
+        if i == nthreads - 1:
+            nd += ndice % nthreads
         t = multiprocessing.Process(target=roll_dice, args=(q, dsize, nd))
         tobjs.append(t)
         t.start()
