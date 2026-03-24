@@ -107,7 +107,7 @@ async def roll(interaction, text: str):
             dice_roll = roll_phase1
     else:
         dice_roll = roll_phase1
-    if valid_dice_roll(dice_roll) and not too_many_dice(dice_roll):
+    if valid_dice_roll(dice_roll) and not too_many_dice(dice_roll, 2000):
         results_raw = roll_all_dice(int(dice_roll[0]), int(dice_roll[1]))
         results = ""
         if mod != 0:
@@ -123,7 +123,7 @@ async def roll(interaction, text: str):
             outstr = outstr[2000:]
             outlen -= 2000
         await interaction.followup.send(outstr)
-    elif too_many_dice(dice_roll):
+    elif too_many_dice(dice_roll, 2000):
         await interaction.followup.send("Error: `" + text + "` rolls more than 2000 dice.", ephemeral=True)
     else:
         await interaction.followup.send("Error: `" + text + "` is not a valid dice roll.", ephemeral=True)
