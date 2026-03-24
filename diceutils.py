@@ -119,7 +119,7 @@ async def roll(interaction, text: str):
         outstr = "Rolled " + text + ":\n" + results
         outlen = len(outstr)
         while outlen > 2000:
-            await interaction.response.send_followup(outstr[:2000])
+            await interaction.followup.send(outstr[:2000])
             outstr = outstr[2000:]
             outlen -= 2000
         await interaction.response.send_message(outstr)
