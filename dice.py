@@ -269,7 +269,7 @@ def count_dice(token):
 
     token = (token[3:]).split("d")
 
-    if len(token) == 0 or token[0].isnumeric():
+    if len(token) == 0 or not token[0].isnumeric():
         return 0
     else:
         return int(token[0])
