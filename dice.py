@@ -57,10 +57,10 @@ def roll_all_dice(ndice, dsize):
         t = multiprocessing.Process(target=roll_dice, args=(q, dsize, nd))
         tobjs.append(t)
         t.start()
-    for t in tobjs:
-        t.join()
     for i in range(ndice):
         results.append(q.get())
+    for t in tobjs:
+        t.join()
     return results
 
 
